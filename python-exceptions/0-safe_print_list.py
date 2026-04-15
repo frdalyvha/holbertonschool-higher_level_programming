@@ -1,17 +1,11 @@
-def length(x):
-    s = 0
-    for i in x:
-        s += 1
-    return s
+#!/usr/bin/python3
 def safe_print_list(my_list=[], x=0):
-    if isinstance(my_list,list):
-        if x <= length(my_list):
-            return my_list[:x]
-        raise IndexError
-    raise ValueError
-
-try:
-    nb_print = safe_print_list()
-    print("nb_print: {:d}".format(nb_print))
-except IndexError,ValueError:
-    pass
+    count = 0
+    try:
+        for i in range(x):
+            print(my_list[i], end="")
+            count += 1
+    except IndexError:
+        pass
+    print()
+    return count
