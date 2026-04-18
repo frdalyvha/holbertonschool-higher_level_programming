@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Sends a POST request with a letter to search_user API and displays result."""
+"""Sends POST request with letter to search_user API."""
 import requests
 import sys
 
@@ -9,9 +9,10 @@ if __name__ == "__main__":
     data = {'q': q}
     r = requests.post(url, data=data)
     try:
-        json_response = r.json()
-        if json_response:
-            print("[{}] {}".format(json_response.get('id'), json_response.get('name')))
+        json_resp = r.json()
+        if json_resp:
+            print("[{}] {}".format(
+                json_resp.get('id'), json_resp.get('name')))
         else:
             print("No result")
     except ValueError:
