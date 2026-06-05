@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """
 Flask application that displays products from JSON, CSV, or SQLite.
-Also includes a function to create the database if it doesn't exist.
+Includes database creation and proper ID filtering for SQLite.
 """
 import os
 import json
@@ -59,12 +59,12 @@ def read_csv_file(filepath):
         return None
 
 def read_sqlite_file(db_path):
-    """Read all products from SQLite database."""
+    """Read all products from SQLite database including id."""
     try:
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        cursor.execute("SELECT name, category, price FROM Products")
+        cursor.execute("SELECT id, name, category, price FROM Products")
         rows = cursor.fetchall()
         products = [dict(row) for row in rows]
         conn.close()
@@ -78,7 +78,6 @@ def products():
     source = request.args.get('source')
     product_id = request.args.get('id')
 
-    # Validate source
     if source not in ('json', 'csv', 'sql'):
         return render_template('product_display.html', error="Wrong source")
 
@@ -93,14 +92,12 @@ def products():
         data = read_csv_file(filepath)
     else:  # sql
         db_path = os.path.join(base_dir, 'products.db')
-        # Ensure database exists
         create_database()
         data = read_sqlite_file(db_path)
 
     if data is None:
         return render_template('product_display.html', error="Error reading data file")
 
-    # Filter by id if provided
     if product_id is not None:
         try:
             pid = int(product_id)
